@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 """
 Created on Sun Sep 13 19:50:48 2020
-
 @author: Aleksa
-
 Useful video reference
 https://www.youtube.com/watch?v=9Lo7TFAkohE&ab_channel=JoyYeh
 """
@@ -15,8 +12,9 @@ def transformPreferenceMatrix():
             prefMatrix[i][preferenceMatrix[i][j]] = j
 
 def removePair(i,j):
-    preferenceMatrix[i].remove(j)
-    preferenceMatrix[j].remove(i)
+    if(j in preferenceMatrix[i]):
+        preferenceMatrix[i].remove(j)
+        preferenceMatrix[j].remove(i)
 
 def isBetterOffer(sender, receiver):
     if(offers[receiver] == -1):
@@ -43,13 +41,13 @@ prefMatrix = []
 4 -- [1]
 5 -- [3]'''
 
-preferenceMatrix = [
+'''preferenceMatrix = [
         [1,3,5,4,2],
         [4,2,5,3,0],
         [1,5,4,0,3],
         [2,0,5,1,4],
         [1,0,5,2,3],
-        [0,3,4,2,1]]
+        [0,3,4,2,1]]'''
 '''solution:
 0 -- [5]
 1 -- [4]
@@ -58,6 +56,15 @@ preferenceMatrix = [
 4 -- [1]
 5 -- [0]'''
     
+
+preferenceMatrix = [
+        [2,3,1,5,4],
+        [5,4,3,0,2],
+        [1,3,4,0,5],
+        [4,1,2,5,0],
+        [2,0,1,3,5],
+        [4,0,2,3,1]]
+
 n = len(preferenceMatrix)
     
 offers = [-1] * n
@@ -137,7 +144,8 @@ if(__name__ == "__main__"):
             q_list.append(preferenceMatrix[p_list[-1]][1])
             p_list.append(preferenceMatrix[q_list[-1]][-1])
             
-            if(p_list[-1] == p_list[0]):
+           #if(p_list[-1] == p_list[0]):
+            if(p_list[-1] in p_list[:-1]):
                 for i in range(len(q_list)):
                     removePair(p_list[i+1],q_list [i])
                 
@@ -152,10 +160,5 @@ if(__name__ == "__main__"):
           #  print(str(i) + " -- " + str(offers[i]))
             #printed.append(i)
             #printed.append(offers[i])
-    
-    
-    
-    
-    
     
     

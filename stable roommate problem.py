@@ -1,6 +1,4 @@
-"""
-Created on Sun Sep 13 19:50:48 2020
-@author: Aleksa
+"""@author: Aleksa
 Useful video reference
 https://www.youtube.com/watch?v=9Lo7TFAkohE&ab_channel=JoyYeh
 """
@@ -24,6 +22,25 @@ def isBetterOffer(sender, receiver):
     
     return False
     
+def readMatrix():
+    a=[] 
+    for i in range(n):   
+        a.append([int(j) for j in input().split()]) 
+    
+    return a
+
+def sortMatrix(inMatrix):
+    temp_matrix = []
+    for j in range(n):
+        temp = [i[0] for i in sorted(enumerate(inMatrix[j]), key=lambda x:x[1])]
+        
+        for k in range(n - 1):
+            if(temp[k] >= j):
+                temp[k] += 1
+                
+        temp_matrix.append(temp)        
+            
+    return temp_matrix
 
 prefMatrix = []
 
@@ -55,8 +72,8 @@ prefMatrix = []
 3 -- [2]
 4 -- [1]
 5 -- [0]'''
-    
 
+'''
 preferenceMatrix = [
         [2,3,1,5,4],
         [5,4,3,0,2],
@@ -65,12 +82,34 @@ preferenceMatrix = [
         [2,0,1,3,5],
         [4,0,2,3,1]]
 
-n = len(preferenceMatrix)
+
+suitor_preferences = {
+    "A": ["D", "B", "C"], "B": ["C", "A", "D"], "C": ["A", "B", "D"],
+    "D": ["A", "B", "C"]
+    }
+
+preferenceMatrix = [[
+    [3, 1, 2],
+    [2, 0, 3],
+    [0, 1, 3],
+    [0, 1, 2]
+    ]]
+'''
+
+preferenceMatrix = []
+
+n = 0
     
-offers = [-1] * n
 
 
 if(__name__ == "__main__"):
+    
+    n = int(input())
+    offers = [-1] * n
+    
+    inMatrix = readMatrix()
+    
+    preferenceMatrix = sortMatrix(inMatrix)
     
     transformPreferenceMatrix()
     
@@ -86,7 +125,7 @@ if(__name__ == "__main__"):
         for j in range(n - 1):
             
             if(j >= len(preferenceMatrix[i])):
-               print("Not possible")
+               print("-1")
                quit()
            
             potentialPartner = preferenceMatrix[i][j]
@@ -126,7 +165,7 @@ if(__name__ == "__main__"):
         p_list = [] # p[i] is the last preference of q[i-1]
         for i in range(len(preferenceMatrix)):
             if(len(preferenceMatrix[i]) == 0):
-                print("Not possible")
+                print("-1")
                 quit()
                 
             if(len(preferenceMatrix[i]) > 1):
@@ -138,7 +177,7 @@ if(__name__ == "__main__"):
         
         while(True):
             if(len(preferenceMatrix[p_list[-1]]) <= 1):
-                print("Not possible")
+                print("-1")
                 quit()
                 
             q_list.append(preferenceMatrix[p_list[-1]][1])
@@ -155,10 +194,4 @@ if(__name__ == "__main__"):
     
     for i in range(len(offers)):
         
-        print(str(i) + " -- " + str(preferenceMatrix[i]))
-        #if(i not in printed):
-          #  print(str(i) + " -- " + str(offers[i]))
-            #printed.append(i)
-            #printed.append(offers[i])
-    
-    
+        print(str(i) + " " + str(preferenceMatrix[i]))

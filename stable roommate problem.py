@@ -2,6 +2,8 @@
 Useful video reference
 https://www.youtube.com/watch?v=9Lo7TFAkohE&ab_channel=JoyYeh
 """
+lines = open('output.txt').read().splitlines()
+lineNum = 0
 
 def transformPreferenceMatrix():
     for i in range(n):
@@ -21,11 +23,28 @@ def isBetterOffer(sender, receiver):
         return True
     
     return False
+
+def keepOnlyOffer(receiver, sender):
+    returnVal = False
+    if(sender in preferenceMatrix[receiver]):
+        for j in reversed(range(len(preferenceMatrix[receiver]))):
+            #atren1 = preferenceMatrix[i][j]
+            #atren2 = offers[i]
+            if(preferenceMatrix[receiver][j] != sender):
+                removePair(receiver, preferenceMatrix[receiver][j])
+                returnVal = True
+            else:
+                break
     
+    return returnVal
+
 def readMatrix():
+    global lineNum
+    global lines
     a=[] 
     for i in range(n):   
-        a.append([int(j) for j in input().split()]) 
+        a.append([int(j) for j in lines[lineNum].split()]) 
+        lineNum += 1
     
     return a
 
@@ -34,12 +53,12 @@ def sortMatrix(inMatrix):
     for j in range(n):
         temp = [i[0] for i in sorted(enumerate(inMatrix[j]), key=lambda x:x[1])]
         
-        for k in range(n - 1):
+        for k in range(len(temp)):
             if(temp[k] >= j):
                 temp[k] += 1
-                
-        temp_matrix.append(temp)        
             
+        temp_matrix.append(temp)
+        
     return temp_matrix
 
 prefMatrix = []
@@ -72,7 +91,7 @@ prefMatrix = []
 3 -- [2]
 4 -- [1]
 5 -- [0]'''
-
+    
 '''
 preferenceMatrix = [
         [2,3,1,5,4],
@@ -88,25 +107,26 @@ suitor_preferences = {
     "D": ["A", "B", "C"]
     }
 
-preferenceMatrix = [[
+'''
+
+preferenceMatrix = [
     [3, 1, 2],
     [2, 0, 3],
     [0, 1, 3],
     [0, 1, 2]
-    ]]
-'''
+    ]
 
-preferenceMatrix = []
-
-n = 0
+n = len(preferenceMatrix)
     
-
+offers = [-1] * n
 
 if(__name__ == "__main__"):
     
-    n = int(input())
-    offers = [-1] * n
+    n = int(lines[lineNum])
+    lineNum += 1
     
+    offers = [-1] * n
+
     inMatrix = readMatrix()
     
     preferenceMatrix = sortMatrix(inMatrix)
@@ -126,7 +146,7 @@ if(__name__ == "__main__"):
             
             if(j >= len(preferenceMatrix[i])):
                print("-1")
-               quit()
+               exit()
            
             potentialPartner = preferenceMatrix[i][j]
             
@@ -135,8 +155,8 @@ if(__name__ == "__main__"):
                     
                     if(offers[potentialPartner] != -1):
                         offerSenderOrder.insert(0, offers[potentialPartner])
-                        preferenceMatrix[offers[potentialPartner]].pop(0)
-                        preferenceMatrix[potentialPartner].remove(offers[potentialPartner])
+                        removePair(offers[potentialPartner], potentialPartner)
+                        
                     offers[potentialPartner] = i 
                     break
     
@@ -150,8 +170,7 @@ if(__name__ == "__main__"):
             #atren1 = preferenceMatrix[i][j]
             #atren2 = offers[i]
             if(preferenceMatrix[i][j] != offers[i]):
-                preferenceMatrix[preferenceMatrix[i][j]].remove(i)
-                preferenceMatrix[i].pop()
+                removePair(i, preferenceMatrix[i][j])
             else:
                 break
             
@@ -159,14 +178,25 @@ if(__name__ == "__main__"):
     
     #step 3:
     
+    finishedNode = [False] * n
+    
     while(True):
         
+        shouldDoubleCheck = True
+        """
+        while(shouldDoubleCheck):
+            shouldDoubleCheck = False
+            for i in range(n):
+                if(len(preferenceMatrix[i]) == 1 and not finishedNode[i]):
+                        shouldDoubleCheck = shouldDoubleCheck or keepOnlyOffer(preferenceMatrix[i][0], i)
+                        finishedNode[i] = True
+                        """
         q_list = [] # q[i] is the second preference of p[i]
         p_list = [] # p[i] is the last preference of q[i-1]
         for i in range(len(preferenceMatrix)):
             if(len(preferenceMatrix[i]) == 0):
                 print("-1")
-                quit()
+                exit()
                 
             if(len(preferenceMatrix[i]) > 1):
                 p_list.append(i)
@@ -178,20 +208,25 @@ if(__name__ == "__main__"):
         while(True):
             if(len(preferenceMatrix[p_list[-1]]) <= 1):
                 print("-1")
-                quit()
+                exit()
                 
             q_list.append(preferenceMatrix[p_list[-1]][1])
             p_list.append(preferenceMatrix[q_list[-1]][-1])
             
            #if(p_list[-1] == p_list[0]):
             if(p_list[-1] in p_list[:-1]):
-                for i in range(len(q_list)):
-                    removePair(p_list[i+1],q_list [i])
+                for i in range(p_list.index(p_list[-1]), len(q_list)):
+                    #print(p_list[i+1],q_list[i])
+                    removePair(p_list[i+1], q_list[i])
+                    
+                for i in range(n):
+                    if(len(preferenceMatrix[i]) == 0):
+                        print("-1")
+                        exit()
+                    keepOnlyOffer(preferenceMatrix[i][0], i)
                 
                 break
-            
-    printed = []
-    
+                
     for i in range(len(offers)):
         
-        print(str(i) + " " + str(preferenceMatrix[i]))
+        print(str(preferenceMatrix[i][0] + 1))
